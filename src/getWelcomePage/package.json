@@ -1,0 +1,7 @@
+{
+  "name": "mikeyoung-stackery-node10-hello",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "~2"
+  }
+}
