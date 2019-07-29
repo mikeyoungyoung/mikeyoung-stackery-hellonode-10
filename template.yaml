@@ -20,6 +20,13 @@ Resources:
                 type: aws_proxy
                 uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getWelcomePage.Arn}/invocations
               responses: {}
+          /helloworld:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${helloWorld.Arn}/invocations
+              responses: {}
       EndpointConfiguration: REGIONAL
   getWelcomePage:
     Type: AWS::Serverless::Function
@@ -45,6 +52,28 @@ Resources:
             RestApiId: !Ref api
     Metadata:
       StackeryName: getWelcomePage
+  helloWorld:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-helloWorld
+      Description: !Sub
+        - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
+        - ResourceName: helloWorld
+      CodeUri: src/helloWorld
+      Handler: index.handler
+      Runtime: nodejs10.x
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+      Events:
+        apiGEThelloworld:
+          Type: Api
+          Properties:
+            Path: /helloworld
+            Method: GET
+            RestApiId: !Ref api
 Parameters:
   StackeryStackTagName:
     Type: String
@@ -55,3 +84,9 @@ Parameters:
   StackeryEnvironmentAPIGatewayStageName:
     Type: String
     Description: Environment name used for API Gateway Stage names (injected by Stackery at deployment time)
+  StackTagName:
+    Type: String
+    Description: Stack Name (injected by Stackery at deployment time)
+  EnvironmentTagName:
+    Type: String
+    Description: Environment Name (injected by Stackery at deployment time)
