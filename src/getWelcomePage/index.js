@@ -1,4 +1,5 @@
 const fs = require('fs');
+const express = require('express')
 exports.handler = async event => {
   // Log http request
   console.log(event);
@@ -8,9 +9,9 @@ exports.handler = async event => {
   const response = {
     statusCode: 200,
     headers: {
-      'Content-Type': 'text/html'
+      'Content-Type': 'application/json'
     },
-    body: responseBody
+    body: {"key1":1,"key2":2}
   };
 
   return response;
